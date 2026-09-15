@@ -1,0 +1,192 @@
+/* ==========================================================================
+   3D STAGE SPECIFIC STYLES
+   ========================================================================== */
+
+/* Custom cursor replaces the native arrow everywhere on desktop, not just
+   over the 3D stage — otherwise the browser's own arrow cursor shows on
+   top of/next to the Toyota-logo cursor outside the hero. `!important`
+   because several components (buttons, swatches, selector cards…) set
+   their own `cursor: pointer` for convention, which would otherwise win
+   over a plain element-selector rule. */
+*{ cursor: none !important; }
+@media (max-width: 860px), (hover: none) and (pointer: coarse){
+  *{ cursor: auto !important; }
+}
+
+/* ---------- Loading screen ---------- */
+.loading-screen{
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--c-black);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 1.4rem;
+  transition: opacity 0.6s var(--ease-cinematic), visibility 0.6s;
+}
+.loading-screen.is-hidden{ opacity: 0; visibility: hidden; pointer-events: none; }
+
+/* Wrapper: sized to exactly the logo's box, and NOT the swinging element
+   itself — this is what the rays center on, so their origin is anchored to
+   the logo's true center regardless of the swing rotation or what else
+   (word/label/button) sits below it in the stack. */
+.loading-mark-wrap{
+  position: relative;
+  width: clamp(220px, 34vw, 380px);
+  aspect-ratio: 60 / 40;
+}
+
+/* Rays: red light rays radiating from behind the logo in every direction,
+   bursting outward every few seconds. A single element — the "rays" are a
+   static repeating-conic-gradient + radial mask, never redrawn; only
+   transform (scale/rotate) and opacity animate, so the compositor handles
+   the whole burst cheaply after the first paint. */
+.loading-rays{
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 85vmax; height: 85vmax;
+  margin: -42.5vmax 0 0 -42.5vmax;
+  pointer-events: none;
+  background: repeating-conic-gradient(
+    rgba(235,10,30,0.95) 0deg 1.1deg,
+    transparent 1.1deg 16deg
+  );
+  /* Tight inner gap so the rays start right at the logo's edge (and are
+     partly hidden right under it, since the logo paints on top) instead of
+     leaving a big empty ring that reads as disconnected from it. */
+  -webkit-mask-image: radial-gradient(circle, transparent 14%, black 30%, black 52%, transparent 76%);
+  mask-image: radial-gradient(circle, transparent 14%, black 30%, black 52%, transparent 76%);
+  opacity: 0;
+  will-change: transform, opacity;
+  animation: ray-burst 4.5s ease-out infinite;
+}
+@keyframes ray-burst{
+  0%, 80%{ opacity: 0; transform: scale(0.65) rotate(0deg); }
+  87%{ opacity: 0.85; transform: scale(0.95) rotate(5deg); }
+  100%{ opacity: 0; transform: scale(1.3) rotate(13deg); }
+}
+
+/* Logo: hangs and swings gently side to side, like a pendant/charm — sized
+   large so it reads as the centerpiece of the loading screen. Sits ON TOP
+   of the rays (both fill the wrap) but is a sibling, not a parent, so the
+   swing rotation never drags the rays' origin off-center. */
+.loading-mark{
+  position: absolute;
+  inset: 0;
+  color: var(--c-red);
+  transform-origin: 50% -20px;
+  animation: pendant-swing 3.2s ease-in-out infinite;
+  filter: drop-shadow(0 0 40px rgba(235,10,30,0.45));
+}
+.loading-mark__logo{ width: 100%; height: 100%; display: block; }
+
+@keyframes pendant-swing{
+  0%, 100%{ transform: rotate(-9deg); }
+  50%{ transform: rotate(9deg); }
+}
+
+.loading-mark__word{
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
+  letter-spacing: 0.28em;
+  color: var(--c-red);
+  margin: 1rem 0 0;
+  text-indent: 0.28em; /* re-center for the trailing letter-spacing gap */
+}
+
+.loading-label{ font-size: 0.78rem; color: var(--c-grey-2); letter-spacing: 0.04em; margin: 0; }
+
+.loading-continue{
+  margin-top: 0.6rem;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #fff;
+  background: var(--c-red);
+  border: none;
+  padding: 0.8rem 2.2rem;
+  border-radius: 999px;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(8px);
+  animation: continue-in 0.5s var(--ease-cinematic) forwards;
+  animation-play-state: paused;
+}
+.loading-continue:not([hidden]){ animation-play-state: running; }
+.loading-continue:hover{ background: #ff1b30; }
+@keyframes continue-in{
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- Custom cursor: a small white Toyota mark, always legible
+   regardless of what's underneath (dark sections, light photos, etc.) ---------- */
+.cursor{
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 10001; /* above the loading screen (9999) and skip-link (10000) — it must never disappear behind either */
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+}
+.cursor__logo{
+  position: absolute; top: 0; left: 0;
+  width: 30px; height: 20px;
+  transform: translate(-50%, -50%);
+  color: #fff;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.55)) drop-shadow(0 0 1px rgba(0,0,0,0.8));
+  transition: width 0.2s var(--ease-cinematic), height 0.2s var(--ease-cinematic), color 0.2s ease;
+}
+.cursor__label{
+  position: absolute; top: 20px; left: 0;
+  transform: translateX(-50%);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-white);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+.cursor.is-hover .cursor__logo{
+  width: 42px; height: 28px;
+  color: var(--c-red);
+}
+.cursor.is-hover .cursor__label{ opacity: 1; }
+.cursor.is-hidden{ display: none; }
+
+/* ---------- Fallback (no WebGL) ---------- */
+.scene-fallback{
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  background:
+    radial-gradient(ellipse at 50% 30%, rgba(235,10,30,0.10), transparent 55%),
+    linear-gradient(180deg, #17181c 0%, #0a0a0c 100%);
+}
+.scene-fallback__plate{
+  max-width: 460px;
+  text-align: center;
+  padding: 2rem;
+  border: 1px solid var(--c-line);
+  border-radius: 16px;
+  background: rgba(255,255,255,0.02);
+}
+.scene-fallback__plate h2{ font-family: var(--font-display); margin: 0.4rem 0; font-size: 1.6rem; }
+.scene-fallback__plate p:last-child{ color: var(--c-grey-1); font-size: 0.92rem; }
+
+/* Reduced motion: kill decorative animation, keep functional transitions instant */
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; }
+}
+body[data-reduced-motion="true"] .hotspot__dot::after,
+body[data-reduced-motion="true"] .scroll-cue__line::after,
+body[data-reduced-motion="true"] .hero__hint-dot{
+  animation: none !important;
+}
+
+/* Reduced transparency: translucent "glass" surfaces go frosty/solid
+   instead — raise the background opacity and drop the blur, so text over
+   them stays legible for anyone who's asked for less transparency. */
+@media (prefers-reduced-transparency: reduce){
+  .btn-back{ background: #17181a; backdrop-filter: none; }
+  .info-panel{ background: #1c1d20; backdrop-filter: none; }
+  .hotspot__label{ background: #17181a; backdrop-filter: none; }
+}

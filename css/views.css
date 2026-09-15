@@ -1,0 +1,178 @@
+/* ==========================================================================
+   VIEW ROUTER — one full "screen" visible at a time, cross-faded by
+   js/router.js instead of everything living in one continuous scroll.
+   ========================================================================== */
+
+.view{
+  display: none;
+  min-height: 100vh;
+  padding-top: var(--header-h);
+}
+.view.view--active{ display: block; }
+
+/* Views that are single vertical flows (services/configurator/reviews) get
+   the same rhythm the old scroll sections had. */
+#view-servicios, #view-configurador, #view-resenas{
+  padding: calc(var(--header-h) + 5rem) 2.5rem 5rem;
+  text-align: center;
+}
+
+/* Configurador / Reseñas were plain black above the fold — purely
+   decorative background photography (not tied to any specific vehicle,
+   just ambience) to fill the empty space, same dark-scrim treatment as
+   .cta-final elsewhere. */
+#view-configurador{
+  background:
+    linear-gradient(180deg, rgba(10,10,12,0.93) 0%, rgba(10,10,12,0.75) 35%, rgba(10,10,12,0.97) 100%),
+    url('../img/5.avif');
+  background-size: cover;
+  background-position: center;
+}
+#view-resenas{
+  background:
+    linear-gradient(180deg, rgba(10,10,12,0.93) 0%, rgba(10,10,12,0.75) 35%, rgba(10,10,12,0.97) 100%),
+    url('../img/2.jpg');
+  background-size: cover;
+  background-position: center;
+}
+#view-exterior, #view-interior, #view-tecnologia{ display: none; }
+#view-exterior.view--active, #view-interior.view--active, #view-tecnologia.view--active{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 100vh;
+}
+#view-modelos.view--active{ display: block; }
+
+/* ---------- Back-to-previous-view control (ficha / explorador) ---------- */
+.view-back{
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: calc(var(--header-h) + 1.5rem) 2.5rem 0;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid var(--c-line);
+  color: var(--c-white);
+  font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.65rem 1.1rem 0.65rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+}
+.view-back svg{ width: 18px; height: 18px; }
+.view-back:hover{ border-color: var(--c-red); color: var(--c-red); }
+.view-back--overlay{
+  position: absolute;
+  top: calc(var(--header-h) + 1.5rem);
+  left: 2.5rem;
+  z-index: 30;
+  margin: 0;
+}
+
+/* ==========================================================================
+   HERO ESTÁTICO (view: modelos) — a normal marketing hero, no WebGL.
+   ========================================================================== */
+.hero-static{
+  position: relative;
+  min-height: 82vh;
+  display: flex;
+  align-items: flex-end;
+  overflow: hidden;
+}
+.hero-static__media{
+  position: absolute; inset: 0;
+  background-size: cover;
+  background-position: center 35%;
+}
+.hero-static__scrim{
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10,10,12,0.55) 0%, rgba(10,10,12,0.35) 40%, rgba(10,10,12,0.95) 100%),
+    linear-gradient(90deg, rgba(10,10,12,0.75) 0%, transparent 55%);
+}
+.hero-static__intro{
+  position: relative;
+  z-index: 1;
+  padding: 0 2.5rem 4rem;
+  max-width: 620px;
+}
+.hero-static__intro h1{
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
+  line-height: 0.95;
+  margin: 0 0 1rem;
+  letter-spacing: -0.025em;
+}
+.hero-static__intro h1 span{ color: var(--c-red); display: block; }
+.hero-static__sub{ color: var(--c-grey-1); font-size: 1.05rem; max-width: 480px; margin: 0 0 1.6rem; }
+
+/* ==========================================================================
+   FICHA DE VEHÍCULO
+   ========================================================================== */
+.ficha{
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 3rem;
+  max-width: 1200px;
+  margin: 1.5rem auto 4rem;
+  padding: 0 2.5rem;
+  align-items: start;
+}
+.ficha__gallery{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.6rem;
+}
+.ficha__gallery-item{
+  aspect-ratio: 4/3;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  background: var(--c-panel);
+  position: relative;
+}
+.ficha__gallery-item:first-child{ grid-column: 1 / -1; aspect-ratio: 16/10; }
+.ficha__gallery-item img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+.ficha__gallery-item span{
+  position: absolute; left: 0.6rem; bottom: 0.5rem;
+  font-size: 0.68rem; color: rgba(255,255,255,0.85);
+  background: rgba(10,10,12,0.55); padding: 0.2rem 0.55rem; border-radius: 999px;
+}
+.ficha__gallery-placeholder{
+  display: flex; align-items: center; justify-content: center;
+  color: var(--c-grey-2); font-size: 0.8rem; text-align: center; padding: 1rem;
+}
+
+.ficha__tagline{ color: var(--c-grey-1); font-size: 1.02rem; margin: 0.4rem 0 1rem; }
+.ficha__price{ font-family: var(--font-display); font-size: 1.3rem; color: var(--c-red); font-weight: 600; margin: 0 0 1.5rem; }
+
+.ficha__specs{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.9rem 1.5rem;
+  margin: 0 0 2rem;
+  padding: 1.4rem;
+  border: 1px solid var(--c-line);
+  border-radius: 14px;
+  background: var(--c-panel);
+}
+.ficha__specs dt{ font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--c-grey-2); margin: 0 0 0.2rem; }
+.ficha__specs dd{ margin: 0; font-size: 0.92rem; color: var(--c-white); font-weight: 500; }
+.ficha__specs > div{ grid-column: span 1; }
+.ficha__specs > div.span-2{ grid-column: span 2; }
+
+.ficha__actions{ display: flex; gap: 1rem; flex-wrap: wrap; }
+
+/* ==========================================================================
+   CONFIGURATOR hint (new, view no longer sits under the 3D canvas)
+   ========================================================================== */
+.configurator__hint{
+  max-width: 560px; margin: 0 auto 1rem; text-align: center;
+  color: var(--c-grey-1); font-size: 0.92rem;
+}
+.configurator__hint a{ color: var(--c-red); font-weight: 600; }
+
+@media (max-width: 900px){
+  .ficha{ grid-template-columns: 1fr; }
+}

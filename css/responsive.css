@@ -1,0 +1,54 @@
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1024px){
+  /* Nav stays reachable (not hidden) — these views only exist as router
+     screens now, not scroll-past sections, so hiding nav here would strand
+     mobile users with no way to reach Exterior/Interior/Tecnología/etc. */
+  .site-header__nav{
+    gap: 1.1rem;
+    font-size: 0.8rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .site-header__nav::-webkit-scrollbar{ display: none; }
+  .configurator__panel{ grid-template-columns: 1fr; gap: 2rem; }
+}
+
+@media (max-width: 860px){
+  .site-header{ padding: 0 1.2rem; }
+  .hero__intro{ left: 1.2rem; bottom: 5.5rem; max-width: calc(100% - 2.4rem); }
+  .scroll-cue{ right: 1.2rem; bottom: 1.4rem; }
+  .btn-back{ left: 1.2rem; top: calc(var(--header-h) + 1rem); }
+  .info-panel{ right: 1.2rem; left: 1.2rem; width: auto; top: auto; bottom: 1.2rem; }
+  .story{ padding: 3rem 1.2rem; min-height: auto; flex-direction: column; align-items: stretch; gap: 1.8rem; }
+  .story__text{ max-width: none; }
+  .story__visual{ max-width: none; min-height: 220px; order: -1; }
+  .selector, .configurator, .gallery, .cta-final, .services, .reviews{ padding: 4rem 1.2rem; }
+  .stat-row{ gap: 1.4rem; }
+
+  /* Custom cursor is desktop-only; disable entirely on touch */
+  .cursor{ display: none !important; }
+  .scene-stage{ cursor: default; }
+
+  /* Hotspot labels: hide by default on touch, show only the active/tapped one */
+  .hotspot__label{ display: none; }
+  .hotspot.is-tapped .hotspot__label{
+    display: block; opacity: 1; transform: none; position: absolute; top: -34px; left: 50%; transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 520px){
+  .hero__intro h1, .hero-static__intro h1{ font-size: 2.2rem; }
+  .selector__grid{ grid-template-columns: repeat(2, 1fr); }
+  .site-header__cta{ display: none; }
+}
+
+/* Landscape phones: shrink hero so UI doesn't get crushed */
+@media (max-height: 480px) and (orientation: landscape){
+  .hero{ min-height: 100vh; }
+  .hero__intro{ bottom: 1.5rem; }
+  .hero__sub{ display: none; }
+}

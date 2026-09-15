@@ -1,0 +1,62 @@
+/* ==========================================================================
+   KEYFRAMES + scroll-reveal utility classes
+   ========================================================================== */
+
+@keyframes spin{ to{ transform: rotate(360deg); } }
+
+@keyframes pulse-dot{
+  0%, 100%{ opacity: 1; transform: scale(1); }
+  50%{ opacity: 0.4; transform: scale(1.4); }
+}
+
+@keyframes scroll-cue-flow{
+  0%{ top: -100%; }
+  100%{ top: 100%; }
+}
+
+@keyframes hotspot-breathe{
+  0%{ transform: scale(1); opacity: 0.7; }
+  70%{ transform: scale(1.9); opacity: 0; }
+  100%{ transform: scale(1.9); opacity: 0; }
+}
+
+/* Generic reveal-on-scroll utility, toggled by animations.js via IntersectionObserver / ScrollTrigger */
+.reveal{
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.8s var(--ease-cinematic), transform 0.8s var(--ease-cinematic);
+}
+.reveal.is-visible{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* IMPORTANT: no default opacity:0 here. This used to gate visibility on a
+   scroll-triggered ".is-active" class; now that these are router views (see
+   main.js), the reveal is re-triggered on every visit, and if it ever fails
+   to fire for any reason, content must still default to fully visible — the
+   entrance animation is a bonus, never a visibility gate. */
+.story.is-active .story__text > *{
+  animation: story-in 0.7s var(--ease-cinematic) both;
+}
+.story.is-active .story__text > *:nth-child(1){ animation-delay: 0s; }
+.story.is-active .story__text > *:nth-child(2){ animation-delay: 0.08s; }
+.story.is-active .story__text > *:nth-child(3){ animation-delay: 0.16s; }
+.story.is-active .story__text > *:nth-child(4){ animation-delay: 0.24s; }
+
+@keyframes story-in{
+  from{ opacity: 0; transform: translateY(18px); }
+  to{ opacity: 1; transform: translateY(0); }
+}
+
+.hotspot{ animation: hotspot-in 0.4s var(--ease-cinematic) backwards; }
+@keyframes hotspot-in{
+  from{ opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+  to{ opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+.info-panel{ animation: panel-in 0.35s var(--ease-cinematic); }
+@keyframes panel-in{
+  from{ opacity: 0; transform: translateX(16px); }
+  to{ opacity: 1; transform: translateX(0); }
+}

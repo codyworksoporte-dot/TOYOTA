@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Toyota | Explora el Vehículo — Showroom Digital</title>
+<meta name="description" content="Explora un concepto de showroom digital Toyota: elige tu modelo, conoce su ficha real y entra a explorarlo en una interfaz 3D interactiva.">
+<meta name="theme-color" content="#0a0a0c">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Toyota — Explora el Vehículo">
+<meta property="og:description" content="Un concepto de showroom automotriz digital: el automóvil como interfaz interactiva 3D.">
+<meta property="og:locale" content="es_ES">
+
+<!-- Structured data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "name": "Toyota — Explora el Vehículo",
+  "description": "Concepto de showroom digital interactivo para la exploración 3D de vehículos Toyota.",
+  "inLanguage": "es"
+}
+</script>
+
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 fill=%22%230a0a0c%22/><circle cx=%2250%22 cy=%2250%22 r=%2228%22 fill=%22none%22 stroke=%22%23eb0a1e%22 stroke-width=%228%22/></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Barlow+Condensed:wght@500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/views.css">
+<link rel="stylesheet" href="css/3d.css">
+<link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/responsive.css">
+
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body data-reduced-motion="auto">
+
+<a class="skip-link" href="#main-content">Saltar al contenido principal</a>
+
+<!-- ============ LOADING SCREEN ============ -->
+<div id="loading-screen" class="loading-screen" role="dialog" aria-modal="true" aria-label="Pantalla de carga">
+  <!-- The rays live INSIDE the same wrapper as the logo (not centered on the
+       whole stack, which would drift below the logo once the word/label/
+       button below it are factored into the flex centering) — this way
+       their origin always matches the logo's true center exactly. -->
+  <div class="loading-mark-wrap">
+    <div class="loading-rays" aria-hidden="true"></div>
+    <div class="loading-mark" aria-hidden="true">
+      <svg viewBox="0 0 60 40" class="loading-mark__logo">
+        <ellipse cx="30" cy="20" rx="27" ry="16" fill="none" stroke="currentColor" stroke-width="3"/>
+        <ellipse cx="30" cy="20" rx="10" ry="16" fill="none" stroke="currentColor" stroke-width="3"/>
+        <ellipse cx="30" cy="20" rx="27" ry="6" fill="none" stroke="currentColor" stroke-width="3"/>
+      </svg>
+    </div>
+  </div>
+  <p class="loading-mark__word" aria-hidden="true">TOYOTA</p>
+
+  <p class="loading-label" id="loading-label">Preparando el showroom…</p>
+  <button type="button" class="loading-continue" id="loading-continue" hidden>Continuar</button>
+</div>
+
+<!-- ============ CUSTOM CURSOR (desktop only) ============ -->
+<div id="custom-cursor" class="cursor" aria-hidden="true">
+  <svg viewBox="0 0 60 40" class="cursor__logo">
+    <ellipse cx="30" cy="20" rx="27" ry="16" fill="none" stroke="currentColor" stroke-width="4"/>
+    <ellipse cx="30" cy="20" rx="10" ry="16" fill="none" stroke="currentColor" stroke-width="4"/>
+    <ellipse cx="30" cy="20" rx="27" ry="6" fill="none" stroke="currentColor" stroke-width="4"/>
+  </svg>
+  <span class="cursor__label"></span>
+</div>
+
+<!-- ============ HEADER / NAV ============ -->
+<header class="site-header" id="site-header">
+  <a href="#modelos" class="site-header__logo" data-view-link="modelos" aria-label="Toyota — Inicio">
+    <svg viewBox="0 0 60 40" class="logo-mark" aria-hidden="true">
+      <ellipse cx="30" cy="20" rx="27" ry="16" fill="none" stroke="currentColor" stroke-width="3"/>
+      <ellipse cx="30" cy="20" rx="10" ry="16" fill="none" stroke="currentColor" stroke-width="3"/>
+      <ellipse cx="30" cy="20" rx="27" ry="6" fill="none" stroke="currentColor" stroke-width="3"/>
+    </svg>
+    <span>TOYOTA</span>
+  </a>
+
+  <nav class="site-header__nav" aria-label="Navegación principal">
+    <a href="#modelos" data-view-link="modelos" aria-current="page">Modelos</a>
+    <a href="#exterior" data-view-link="exterior">Exterior</a>
+    <a href="#interior" data-view-link="interior">Interior</a>
+    <a href="#tecnologia" data-view-link="tecnologia">Tecnología</a>
+    <a href="#servicios" data-view-link="servicios">Servicios</a>
+    <a href="#configurador" data-view-link="configurador">Configurador</a>
+    <a href="#resenas" data-view-link="resenas">Reseñas</a>
+  </nav>
+
+  <button class="site-header__cta" id="cta-explore" type="button" data-view-link="modelos">Explorar ahora</button>
+</header>
+
+<main id="main-content">
+
+  <!-- ============ VIEW: MODELOS (inicio) ============ -->
+  <section class="view view--active" id="view-modelos" data-view="modelos" aria-label="Inicio">
+    <div class="hero-static">
+      <div class="hero-static__media" style="background-image:url('img/Galeria-2.jpg')" role="img" aria-label="Toyota Corolla Cross Híbrida junto al mar"></div>
+      <div class="hero-static__scrim"></div>
+      <div class="hero-static__intro">
+        <p class="eyebrow">Concepto — Showroom Digital</p>
+        <h1>EXPLORA <span>EL VEHÍCULO.</span></h1>
+        <p class="hero-static__sub">Elige un modelo, conoce su ficha real con datos oficiales y, si quieres, entra a explorarlo en una interfaz 3D interactiva.</p>
+        <a class="btn-primary" href="#selector" data-scroll-to="selector">Ver los modelos ↓</a>
+      </div>
+    </div>
+
+    <div class="selector" id="selector">
+      <p class="eyebrow">01 — Selecciona tu categoría</p>
+      <h2 class="section-title">Un modelo para cada camino</h2>
+      <div class="selector__grid" id="selector-grid" role="listbox" aria-label="Categorías de vehículos"></div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: FICHA DE VEHÍCULO ============ -->
+  <section class="view" id="view-ficha" data-view="ficha" aria-label="Ficha del vehículo">
+    <button class="view-back" type="button" data-view-link="modelos">
+      <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Volver a modelos
+    </button>
+
+    <div class="ficha">
+      <div class="ficha__gallery" id="ficha-gallery"></div>
+
+      <div class="ficha__info">
+        <p class="eyebrow" id="ficha-category">—</p>
+        <h2 class="section-title" data-vehicle-name>—</h2>
+        <p class="ficha__tagline" id="ficha-tagline"></p>
+        <p class="ficha__price">Desde <span id="stat-price">—</span></p>
+
+        <dl class="ficha__specs" id="ficha-specs"></dl>
+
+        <div class="ficha__actions">
+          <button class="btn-primary" id="btn-explore-3d" type="button">Explorar en 3D →</button>
+          <a class="btn-secondary" id="ficha-official-link" href="#" target="_blank" rel="noopener">Ver ficha oficial ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: EXPLORADOR 3D ============ -->
+  <section class="view" id="view-explorador" data-view="explorador" aria-label="Explorador 3D">
+    <div class="hero" id="hero">
+
+      <div class="scene-stage" id="scene-stage">
+        <canvas id="scene-canvas" aria-hidden="true"></canvas>
+
+        <!-- Fallback for devices without WebGL -->
+        <div id="scene-fallback" class="scene-fallback" hidden>
+          <div class="scene-fallback__plate">
+            <p class="eyebrow">Modo de compatibilidad</p>
+            <h2>Vista estática del vehículo</h2>
+            <p>Tu dispositivo no admite la experiencia 3D interactiva. Vuelve a la ficha para ver fotos y especificaciones.</p>
+          </div>
+        </div>
+
+        <!-- Hotspot layer (positioned dynamically by hotspots.js) -->
+        <div id="hotspot-layer" class="hotspot-layer" aria-hidden="false"></div>
+
+        <!-- Back to vehicle button, shown when inside a focused hotspot view -->
+        <button id="btn-back-to-vehicle" class="btn-back" type="button" hidden>
+          <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Volver al vehículo
+        </button>
+
+        <!-- Contextual info panel for a selected part -->
+        <aside id="info-panel" class="info-panel" hidden aria-live="polite">
+          <button class="info-panel__close" id="info-panel-close" aria-label="Cerrar información">×</button>
+          <p class="info-panel__eyebrow" id="info-panel-eyebrow">Zona</p>
+          <h3 class="info-panel__title" id="info-panel-title">—</h3>
+          <div class="info-panel__body" id="info-panel-body"></div>
+        </aside>
+      </div>
+
+      <button class="view-back view-back--overlay" type="button" data-view-link="ficha">
+        <svg viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Volver a la ficha
+      </button>
+
+      <div class="hero__intro">
+        <p class="eyebrow">Explorador 3D</p>
+        <p class="hero__sub">No estás mirando un automóvil. Estás explorándolo. Mueve el cursor, selecciona una zona y descubre cada detalle.</p>
+        <div class="hero__hint" id="hero-hint">
+          <span class="hero__hint-dot"></span> Mueve el cursor para rotar la cámara
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: EXTERIOR ============ -->
+  <section class="view" id="view-exterior" data-view="exterior" aria-label="Exterior">
+    <div class="story">
+      <div class="story__text">
+        <p class="eyebrow">Diseño</p>
+        <h2 class="section-title">Diseño que corta el aire</h2>
+        <p class="story__desc">Cada línea de un Toyota responde a una función: aerodinámica, eficiencia y presencia. Elige un modelo en la sección Modelos y explora sus faros y llantas en 3D para conocer sus detalles reales.</p>
+      </div>
+      <div class="story__visual" style="background-image:url('assets/images/dealership/atrium-glass.jpg')" data-caption="Imagen ilustrativa — arquitectura de showroom" role="img" aria-label="Fachada de vidrio de un showroom moderno, imagen ilustrativa de stock"></div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: INTERIOR ============ -->
+  <section class="view" id="view-interior" data-view="interior" aria-label="Interior">
+    <div class="story">
+      <div class="story__text">
+        <p class="eyebrow">Habitáculo</p>
+        <h2 class="section-title">Un habitáculo con propósito</h2>
+        <p class="story__desc">Materiales, espacio y ergonomía pensados para el conductor. Entra a la ficha de cualquier modelo para ver fotos reales del interior, o al Explorador 3D para recorrerlo virtualmente.</p>
+      </div>
+      <div class="story__visual" style="background-image:url('assets/images/dealership/lounge-sofas.jpg')" data-caption="Imagen ilustrativa — confort interior" role="img" aria-label="Sala de estar con sofás de cuero, imagen ilustrativa de stock"></div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: TECNOLOGÍA ============ -->
+  <section class="view" id="view-tecnologia" data-view="tecnologia" aria-label="Tecnología">
+    <div class="story">
+      <div class="story__text">
+        <p class="eyebrow">Tecnología</p>
+        <h2 class="section-title">Sistemas que anticipan</h2>
+        <p class="story__desc">Pantalla central, asistencia de manejo y conectividad integradas de forma nativa en el tablero. Los modos de conducción y la tecnología híbrida varían por modelo — revisa la ficha de cada uno para los detalles reales.</p>
+      </div>
+      <div class="story__visual" style="background-image:url('assets/images/dealership/lounge-modern.jpg')" data-caption="Imagen ilustrativa — sala de tecnología" role="img" aria-label="Sala moderna con iluminación tecnológica, imagen ilustrativa de stock"></div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: SERVICIOS ============ -->
+  <section class="view" id="view-servicios" data-view="servicios" aria-label="Servicios">
+    <p class="eyebrow">Servicios</p>
+    <h2 class="section-title">Más allá de la compra</h2>
+    <div class="services__grid">
+      <a class="service-card" href="https://www.toyota.com.sv/talleres/" target="_blank" rel="noopener" style="background-image:url('assets/images/dealership/tire-detail.jpg')">
+        <div class="service-card__content">
+          <p class="service-card__caption">Imagen ilustrativa</p>
+          <h3>Talleres</h3>
+          <p>Mantenimiento y reparación con técnicos entrenados y certificados por el fabricante.</p>
+          <span class="service-card__cta">Ver en toyota.com.sv ↗</span>
+        </div>
+      </a>
+      <a class="service-card" href="https://www.toyota.com.sv/repuestos/" target="_blank" rel="noopener" style="background-image:url('assets/images/dealership/showroom-interior-2.jpg')">
+        <div class="service-card__content">
+          <p class="service-card__caption">Imagen ilustrativa</p>
+          <h3>Repuestos</h3>
+          <p>Repuestos genuinos para mantener tu vehículo en óptimas condiciones.</p>
+          <span class="service-card__cta">Ver en toyota.com.sv ↗</span>
+        </div>
+      </a>
+      <a class="service-card" href="https://www.toyota.com.sv/financiamiento/" target="_blank" rel="noopener" style="background-image:url('assets/images/dealership/salesperson-customer.jpg')">
+        <div class="service-card__content">
+          <p class="service-card__caption">Imagen ilustrativa</p>
+          <h3>Financiamiento</h3>
+          <p>Planes de financiamiento a la medida para tu próximo Toyota.</p>
+          <span class="service-card__cta">Ver en toyota.com.sv ↗</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: CONFIGURADOR ============ -->
+  <section class="view" id="view-configurador" data-view="configurador" aria-label="Configurador de vehículo">
+    <p class="eyebrow">Configurador</p>
+    <h2 class="section-title">Hazlo tuyo</h2>
+    <p class="configurator__hint">Los cambios se aplican al modelo seleccionado — entra al <a href="#explorador" data-view-link="explorador">Explorador 3D</a> para verlos en vivo.</p>
+
+    <div class="configurator__panel">
+      <div class="config-group" role="group" aria-label="Color exterior">
+        <h3>Color exterior</h3>
+        <div class="swatch-row" id="color-swatches"></div>
+      </div>
+      <div class="config-group" role="group" aria-label="Llantas">
+        <h3>Llantas</h3>
+        <div class="swatch-row" id="wheel-swatches"></div>
+      </div>
+      <div class="config-group" role="group" aria-label="Interior">
+        <h3>Interior</h3>
+        <div class="swatch-row" id="interior-swatches"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ VIEW: RESEÑAS ============ -->
+  <section class="view" id="view-resenas" data-view="resenas" aria-label="Reseñas y reconocimientos">
+    <p class="eyebrow">Reseñas</p>
+    <h2 class="section-title">Lo que dicen de Toyota</h2>
+    <p class="reviews__intro">Reconocimientos reales citados de fuentes públicas de Toyota, y un espacio preparado — sin testimonios inventados — para conectar reseñas verificadas de clientes.</p>
+    <div class="reviews__grid" id="reviews-content"></div>
+
+    <div class="cta-final">
+      <h2>¿Listo para explorarlo en persona?</h2>
+      <p>Toyota El Salvador · Avenida Luis Poma y Prolongación Alameda Juan Pablo II, San Salvador · Tel. 2257-1133</p>
+      <div class="cta-final__actions">
+        <a class="btn-primary" href="https://www.toyota.com.sv/cotizar/" target="_blank" rel="noopener">Agendar prueba de manejo ↗</a>
+        <a class="btn-secondary" href="https://www.toyota.com.sv/sucursales/" target="_blank" rel="noopener">Ver sucursales ↗</a>
+      </div>
+      <p class="cta-final__note">Estos enlaces te llevan al sitio oficial toyota.com.sv — este proyecto es un concepto y no procesa citas ni cotizaciones reales.</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <p>Proyecto conceptual de rework de experiencia digital, no afiliado oficialmente a Toyota Motor Corporation ni a Toyota El Salvador. Precios, motorización y especificaciones marcadas con fuente son datos públicos consultados en toyota.com.sv (2026-09-13); pueden cambiar sin previo aviso — confirma siempre en el sitio oficial o en un concesionario antes de decidir. Los campos marcados [DATOS] son placeholders pendientes de dato oficial. Las fotografías de la Corolla Cross Híbrida fueron proporcionadas directamente por quien encargó este prototipo; el resto de imágenes de showroom/taller son fotografía de stock de Pexels (Pexels License, uso libre) marcadas como "imagen ilustrativa".</p>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
