@@ -1,7 +1,7 @@
 // ==========================================================================
 // ui.js — vehicle selector, info panel, loading screen, fallback detection
 // ==========================================================================
-import { VEHICLE_DATA } from "./vehicle.js";
+import { VEHICLE_DATA } from "./vehicle-data.js";
 
 const CATEGORY_ICONS = {
   "SEDÁN HÍBRIDO": `<svg viewBox="0 0 48 24" fill="none"><path d="M4 17h40M8 17c0-5 4-9 8-9h16c4 0 8 4 8 9" stroke="currentColor" stroke-width="2"/><circle cx="14" cy="18" r="3" stroke="currentColor" stroke-width="2"/><circle cx="34" cy="18" r="3" stroke="currentColor" stroke-width="2"/><path d="M22 8l-3 5h4l-3 5" stroke="#eb0a1e" stroke-width="1.6"/></svg>`,
@@ -37,6 +37,9 @@ export function hideLoadingScreen() {
   const el = document.getElementById("loading-screen");
   if (!el) return;
   el.classList.add("is-hidden");
+  document.querySelectorAll("header, main, footer, .skip-link").forEach((node) => { node.inert = false; });
+  document.body.classList.remove("intro-active");
+  document.querySelector(".site-header__logo")?.focus({ preventScroll: true });
   setTimeout(() => el.remove(), 700);
 }
 
@@ -50,6 +53,11 @@ export function showContinueButton(onContinue) {
   const btn = document.getElementById("loading-continue");
   const label = document.getElementById("loading-label");
   if (!btn) { onContinue(); return; }
+  document.querySelectorAll("header, main, footer, .skip-link").forEach((node) => { node.inert = true; });
+  document.body.classList.add("intro-active");
+  btn.addEventListener("keydown", (event) => {
+    if (event.key === "Tab") { event.preventDefault(); btn.focus(); }
+  });
   if (label) label.textContent = "Todo listo";
   btn.hidden = false;
   btn.addEventListener(
@@ -73,18 +81,23 @@ export function buildVehicleSelector(onSelect) {
     const item = document.createElement("button");
     item.type = "button";
     item.className = "selector__item";
-    item.setAttribute("role", "option");
-    item.setAttribute("aria-selected", i === 0 ? "true" : "false");
+    item.setAttribute("aria-pressed", i === 0 ? "true" : "false");
     item.dataset.id = v.id;
     item.innerHTML = `
-      <span class="selector__item-icon">${CATEGORY_ICONS[v.category] || ""}</span>
+      <span class="selector__photo ${v.gallery?.length ? "" : "selector__photo--pending"}">
+        ${v.gallery?.length
+          ? `<img src="${v.gallery[0].file}" alt="${v.name}" loading="lazy" decoding="async" width="600" height="400">`
+          : `${CATEGORY_ICONS[v.category] || ""}<small>Fotografía próximamente</small>`}
+        <span class="selector__number" aria-hidden="true">0${i + 1}</span>
+      </span>
       <span class="selector__item-name">${v.category}</span>
       <span class="selector__item-model">${v.name}</span>
       <span class="selector__item-price">Desde ${v.price}</span>
+      <span class="selector__item-arrow" aria-hidden="true">↗</span>
     `;
     item.addEventListener("click", () => {
-      grid.querySelectorAll(".selector__item").forEach((el) => el.setAttribute("aria-selected", "false"));
-      item.setAttribute("aria-selected", "true");
+      grid.querySelectorAll(".selector__item").forEach((el) => el.setAttribute("aria-pressed", "false"));
+      item.setAttribute("aria-pressed", "true");
       onSelect(v);
     });
     wrap.appendChild(item);
@@ -95,11 +108,28 @@ export function buildVehicleSelector(onSelect) {
       link.href = v.url;
       link.target = "_blank";
       link.rel = "noopener";
-      link.textContent = "Ver ficha ↗";
+      link.textContent = "Consultar en Toyota El Salvador ↗";
       wrap.appendChild(link);
     }
 
     grid.appendChild(wrap);
+  });
+  document.querySelectorAll("[data-model-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      document.querySelectorAll("[data-model-filter]").forEach((b) => b.setAttribute("aria-pressed", String(b === button)));
+      const filter = button.dataset.modelFilter;
+      let count = 0;
+      [...grid.children].forEach((card, i) => {
+        const v = VEHICLE_DATA[i];
+        const visible = filter === "all" ||
+          (filter === "hybrid" && v.category.includes("HÍBRID")) ||
+          (filter === "suv" && ["suv", "offroad"].includes(v.bodyType)) ||
+          (filter === "pickup" && v.bodyType === "pickup");
+        card.hidden = !visible;
+        if (visible) count++;
+      });
+      document.getElementById("filter-status").textContent = `${count} modelos disponibles en esta selección`;
+    });
   });
 }
 

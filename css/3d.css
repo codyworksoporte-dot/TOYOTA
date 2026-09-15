@@ -8,9 +8,9 @@
    because several components (buttons, swatches, selector cards…) set
    their own `cursor: pointer` for convention, which would otherwise win
    over a plain element-selector rule. */
-*{ cursor: none !important; }
+.custom-cursor-ready, .custom-cursor-ready *{ cursor: none !important; }
 @media (max-width: 860px), (hover: none) and (pointer: coarse){
-  *{ cursor: auto !important; }
+  .custom-cursor-ready, .custom-cursor-ready *{ cursor: auto !important; }
 }
 
 /* ---------- Loading screen ---------- */
