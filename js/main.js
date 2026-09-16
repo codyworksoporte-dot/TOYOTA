@@ -10,13 +10,12 @@
 // 3D" or touches the Configurador), so the default Modelos/Ficha views are
 // cheap, ordinary HTML+CSS with no WebGL cost at all.
 // ==========================================================================
-import { VEHICLE_DATA } from "./vehicle.js";
+import { VEHICLE_DATA } from "./vehicle-data.js";
 import { CustomCursor, attachKeyboardNav, prefersReducedMotion } from "./interactions.js";
 import {
   detectWebGL,
   showFallback,
   setLoadingProgress,
-  hideLoadingScreen,
   showContinueButton,
   buildVehicleSelector,
   buildFicha,
@@ -61,8 +60,18 @@ const router = createRouter({
     if (name === "explorador" && !webglOK) {
       // Nothing to show without WebGL — bounce back to the ficha, which
       // already has real photos + specs as a full alternative.
-      router.goTo("ficha");
+      queueMicrotask(() => router.goTo("ficha"));
       return;
+    }
+    if (name === "explorador") {
+      queueMicrotask(async () => {
+        try { await ensureVehicleLoaded(); }
+        catch {
+          showFallback();
+          const message = document.querySelector(".scene-fallback__plate p:last-child");
+          message.textContent = "No pudimos cargar el explorador. Vuelve a la ficha para ver fotos y especificaciones.";
+        }
+      });
     }
     // Story-text stagger reveal (see animations.css) — re-triggered every
     // time one of these brand views is entered, since they're no longer
@@ -85,21 +94,8 @@ const router = createRouter({
 });
 
 // --------------------------------------------------------------------
-// Smooth scroll within a view (Lenis) + header shading on scroll.
+// Native scrolling within a view; no continuously running smooth-scroll loop.
 // --------------------------------------------------------------------
-if (!reducedMotion && window.Lenis) {
-  const lenis = new window.Lenis({ smoothWheel: true, duration: 1.0 });
-  gsap.ticker.add((time) => lenis.raf(time * 1000));
-  gsap.ticker.lagSmoothing(0);
-}
-
-const header = document.getElementById("site-header");
-window.addEventListener("scroll", () => {
-  header.style.background = window.scrollY > 40
-    ? "rgba(10,10,12,0.92)"
-    : "linear-gradient(to bottom, rgba(10,10,12,0.85), transparent)";
-});
-
 document.querySelectorAll("[data-scroll-to]").forEach((el) => {
   el.addEventListener("click", (e) => {
     e.preventDefault();
@@ -136,7 +132,10 @@ let engineReadyPromise = null;
 function ensureEngine() {
   if (!webglOK) return Promise.resolve();
   if (engineReadyPromise) return engineReadyPromise;
-  engineReadyPromise = boot3DEngine();
+  engineReadyPromise = boot3DEngine().catch((error) => {
+    engineReadyPromise = null;
+    throw error;
+  });
   return engineReadyPromise;
 }
 
@@ -170,9 +169,13 @@ async function boot3DEngine() {
     const previousRig = vehicleRigRef.current;
 
     const spawn = () => {
+      focusedAction = null;
+      backBtn.hidden = true;
+      hideInfoPanel();
       const rig = buildProceduralVehicle(data);
       scene.add(rig.root);
       vehicleRigRef.current = rig;
+      configuration.apply(rig);
 
       cameraStates = getCameraStates(rig.root.userData.dims);
       hotspots = buildHotspots(rig.root.userData.dims, data.bodyType);
@@ -226,6 +229,10 @@ async function boot3DEngine() {
         spawn();
       }, 480);
     } else {
+      if (previousRig) {
+        scene.remove(previousRig.root);
+        disposeVehicle(previousRig);
+      }
       spawn();
     }
   }
@@ -384,7 +391,7 @@ let hasLoadedVehicle = false;
 async function ensureVehicleLoaded() {
   const eng = await ensureEngine();
   if (!eng) return null;
-  if (!hasLoadedVehicle) {
+  if (!hasLoadedVehicle || vehicleRigRef.current?.root.name !== `vehicle-${currentVehicleData.id}`) {
     eng.loadVehicle(currentVehicleData, true);
     hasLoadedVehicle = true;
   }
@@ -397,19 +404,18 @@ document.getElementById("btn-explore-3d").addEventListener("click", async () => 
   btn.disabled = true;
   const originalLabel = btn.textContent;
   btn.textContent = "Cargando…";
-  const eng = await ensureVehicleLoaded();
-  btn.disabled = false;
-  btn.textContent = originalLabel;
-  if (!eng) return; // no WebGL
-  // If a vehicle is already loaded and the user picked a DIFFERENT one from
-  // the selector since, swap it in with the cinematic transition.
-  if (vehicleRigRef.current && vehicleRigRef.current.root.name !== `vehicle-${currentVehicleData.id}`) {
-    eng.loadVehicle(currentVehicleData, false);
+  try {
+    const eng = await ensureVehicleLoaded();
+    if (eng) router.goTo("explorador");
+  } catch {
+    document.getElementById("explore-status").textContent = "No se pudo cargar el explorador. Comprueba tu conexión e inténtalo de nuevo. Las fotos y la ficha siguen disponibles.";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalLabel;
   }
-  router.goTo("explorador");
 });
 
-setupConfigurator({ vehicleRigRef, ensureEngine: ensureVehicleLoaded });
+const configuration = setupConfigurator({ vehicleRigRef, ensureEngine: ensureVehicleLoaded });
 
 // --------------------------------------------------------------------
 // Loading screen: nothing heavy to prepare up front anymore (3D is

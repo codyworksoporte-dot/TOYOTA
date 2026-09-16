@@ -35,6 +35,8 @@
 <link rel="stylesheet" href="css/3d.css">
 <link rel="stylesheet" href="css/animations.css">
 <link rel="stylesheet" href="css/responsive.css">
+<link rel="stylesheet" href="css/materials.css">
+<link rel="preload" as="image" href="img/Galeria-2.jpg">
 
 <script type="importmap">
 {
@@ -113,18 +115,32 @@
       <div class="hero-static__media" style="background-image:url('img/Galeria-2.jpg')" role="img" aria-label="Toyota Corolla Cross Híbrida junto al mar"></div>
       <div class="hero-static__scrim"></div>
       <div class="hero-static__intro">
-        <p class="eyebrow">Concepto — Showroom Digital</p>
-        <h1>EXPLORA <span>EL VEHÍCULO.</span></h1>
-        <p class="hero-static__sub">Elige un modelo, conoce su ficha real con datos oficiales y, si quieres, entra a explorarlo en una interfaz 3D interactiva.</p>
-        <a class="btn-primary" href="#selector" data-scroll-to="selector">Ver los modelos ↓</a>
+        <p class="eyebrow"><span class="edition-dot" aria-hidden="true"></span> Toyota / El Salvador / Concepto digital</p>
+        <h1>EL SIGUIENTE<br><span>CAMINO.</span></h1>
+        <p class="hero-static__sub">Empieza con curiosidad. Encuentra tu Toyota y descubre cada detalle, desde otra perspectiva.</p>
+        <a class="btn-primary" href="#selector" data-scroll-to="selector">Encuentra tu Toyota <span aria-hidden="true">↗</span></a>
       </div>
+      <a class="hero-discover glass-surface" href="#interior" data-view-link="interior">
+        <img src="img/Galeria-6.jpg" width="112" height="84" alt="" decoding="async">
+        <span><small>UNA NUEVA PERSPECTIVA</small><strong>Todo empieza dentro.</strong><span>Descubre el interior ↗</span></span>
+      </a>
+      <div class="hero-index" aria-hidden="true"><span>01 / EXPLORAR</span><span>DISEÑADO PARA DESCUBRIR.</span></div>
     </div>
 
     <div class="selector" id="selector">
-      <p class="eyebrow">01 — Selecciona tu categoría</p>
-      <h2 class="section-title">Un modelo para cada camino</h2>
-      <div class="selector__grid" id="selector-grid" role="listbox" aria-label="Categorías de vehículos"></div>
+      <div class="section-heading"><div><p class="eyebrow">01 / La colección</p>
+      <h2 class="section-title">TU CAMINO.<br>TU TOYOTA.</h2></div><p>De la ciudad a lo extraordinario.<br>Elige un modelo para conocerlo de cerca.</p></div>
+      <div class="model-filters" role="group" aria-label="Filtrar modelos">
+        <button type="button" data-model-filter="all" aria-pressed="true">Todos <span>05</span></button>
+        <button type="button" data-model-filter="hybrid" aria-pressed="false">Híbridos</button>
+        <button type="button" data-model-filter="suv" aria-pressed="false">SUV</button>
+        <button type="button" data-model-filter="pickup" aria-pressed="false">Pickup</button>
+      </div>
+      <p class="sr-only" id="filter-status" role="status"></p>
+      <div class="selector__grid" id="selector-grid" aria-label="Modelos de vehículos"></div>
+      <p class="catalogue-note">Precios de referencia del catálogo consultado. Confirma disponibilidad y precio vigente en Toyota El Salvador.</p>
     </div>
+    <a class="editorial-link" href="#servicios" data-view-link="servicios"><span>02 / Siempre cerca</span><strong>EL VIAJE<br>CONTINÚA.</strong><span class="editorial-link__cta">Conoce nuestros servicios ↗</span></a>
   </section>
 
   <!-- ============ VIEW: FICHA DE VEHÍCULO ============ -->
@@ -149,6 +165,7 @@
           <button class="btn-primary" id="btn-explore-3d" type="button">Explorar en 3D →</button>
           <a class="btn-secondary" id="ficha-official-link" href="#" target="_blank" rel="noopener">Ver ficha oficial ↗</a>
         </div>
+        <p id="explore-status" class="catalogue-note" role="status"></p>
       </div>
     </div>
   </section>
@@ -208,9 +225,10 @@
       <div class="story__text">
         <p class="eyebrow">Diseño</p>
         <h2 class="section-title">Diseño que corta el aire</h2>
-        <p class="story__desc">Cada línea de un Toyota responde a una función: aerodinámica, eficiencia y presencia. Elige un modelo en la sección Modelos y explora sus faros y llantas en 3D para conocer sus detalles reales.</p>
+        <p class="story__desc">Mira de cerca sus líneas, sus faros y cada acabado. Elige tu modelo y pasa de la fotografía a una exploración interactiva de sus zonas.</p>
+        <a class="btn-primary" href="#modelos" data-view-link="modelos">Elegir un modelo ↗</a>
       </div>
-      <div class="story__visual" style="background-image:url('assets/images/dealership/atrium-glass.jpg')" data-caption="Imagen ilustrativa — arquitectura de showroom" role="img" aria-label="Fachada de vidrio de un showroom moderno, imagen ilustrativa de stock"></div>
+      <div class="story__visual" style="background-image:url('img/Galeria-5.jpg')" data-caption="COROLLA CROSS / DETALLE EXTERIOR" role="img" aria-label="Detalle de faro de Corolla Cross, fotografía proporcionada para el concepto"></div>
     </div>
   </section>
 
@@ -220,9 +238,10 @@
       <div class="story__text">
         <p class="eyebrow">Habitáculo</p>
         <h2 class="section-title">Un habitáculo con propósito</h2>
-        <p class="story__desc">Materiales, espacio y ergonomía pensados para el conductor. Entra a la ficha de cualquier modelo para ver fotos reales del interior, o al Explorador 3D para recorrerlo virtualmente.</p>
+        <p class="story__desc">Un lugar para conectar con el camino. Explora el tablero de la Corolla Cross en esta fotografía y encuentra las características de cada versión en su ficha.</p>
+        <a class="btn-primary" href="#modelos" data-view-link="modelos">Descubrir los modelos ↗</a>
       </div>
-      <div class="story__visual" style="background-image:url('assets/images/dealership/lounge-sofas.jpg')" data-caption="Imagen ilustrativa — confort interior" role="img" aria-label="Sala de estar con sofás de cuero, imagen ilustrativa de stock"></div>
+      <div class="story__visual" style="background-image:url('img/Galeria-6.jpg')" data-caption="COROLLA CROSS / EL HABITÁCULO" role="img" aria-label="Tablero e interior de Corolla Cross, fotografía proporcionada para el concepto"></div>
     </div>
   </section>
 
@@ -233,6 +252,7 @@
         <p class="eyebrow">Tecnología</p>
         <h2 class="section-title">Sistemas que anticipan</h2>
         <p class="story__desc">Pantalla central, asistencia de manejo y conectividad integradas de forma nativa en el tablero. Los modos de conducción y la tecnología híbrida varían por modelo — revisa la ficha de cada uno para los detalles reales.</p>
+        <a class="btn-primary" href="#modelos" data-view-link="modelos">Explorar la colección ↗</a>
       </div>
       <div class="story__visual" style="background-image:url('assets/images/dealership/lounge-modern.jpg')" data-caption="Imagen ilustrativa — sala de tecnología" role="img" aria-label="Sala moderna con iluminación tecnológica, imagen ilustrativa de stock"></div>
     </div>
@@ -274,6 +294,7 @@
   <section class="view" id="view-configurador" data-view="configurador" aria-label="Configurador de vehículo">
     <p class="eyebrow">Configurador</p>
     <h2 class="section-title">Hazlo tuyo</h2>
+    <p class="configurator__model">Tu selección / <strong data-vehicle-name>—</strong></p>
     <p class="configurator__hint">Los cambios se aplican al modelo seleccionado — entra al <a href="#explorador" data-view-link="explorador">Explorador 3D</a> para verlos en vivo.</p>
 
     <div class="configurator__panel">
@@ -290,6 +311,8 @@
         <div class="swatch-row" id="interior-swatches"></div>
       </div>
     </div>
+    <p id="config-status" class="config-status" role="status">Combinaciones visuales del prototipo; no representan equipamiento disponible.</p>
+    <a class="btn-primary config-preview" href="#explorador" data-view-link="explorador">Ver mi combinación en 3D ↗</a>
   </section>
 
   <!-- ============ VIEW: RESEÑAS ============ -->
@@ -313,11 +336,11 @@
 </main>
 
 <footer class="site-footer">
+  <div class="footer-signature"><strong>TOYOTA<span> / </span></strong><span>EXPLORA. DESCUBRE. SIGUE.</span><a href="#modelos" data-view-link="modelos">Volver al inicio ↑</a></div>
   <p>Proyecto conceptual de rework de experiencia digital, no afiliado oficialmente a Toyota Motor Corporation ni a Toyota El Salvador. Precios, motorización y especificaciones marcadas con fuente son datos públicos consultados en toyota.com.sv (2026-09-13); pueden cambiar sin previo aviso — confirma siempre en el sitio oficial o en un concesionario antes de decidir. Los campos marcados [DATOS] son placeholders pendientes de dato oficial. Las fotografías de la Corolla Cross Híbrida fueron proporcionadas directamente por quien encargó este prototipo; el resto de imágenes de showroom/taller son fotografía de stock de Pexels (Pexels License, uso libre) marcadas como "imagen ilustrativa".</p>
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/lenis/1.1.13/lenis.min.js"></script>
 
 <script type="module" src="js/main.js"></script>
 </body>

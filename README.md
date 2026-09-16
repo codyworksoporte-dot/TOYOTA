@@ -14,7 +14,7 @@ cuando el usuario lo pide**, no de entrada.
 >
 > **Datos reales, fuentes citadas.** Precios, motorización, potencia/torque,
 > transmisión, colores, airbags y conectividad de los 5 modelos en
-> `js/vehicle.js` son datos públicos y factuales consultados en
+> `js/vehicle-data.js` conservan la información del catálogo consultado en
 > toyota.com.sv (2026-09-13) — se citan como hechos (no protegidos por
 > derecho de autor), no se copió texto de marketing ni imágenes. Pueden
 > cambiar sin previo aviso; confirma siempre en el sitio oficial o en el
@@ -25,10 +25,10 @@ cuando el usuario lo pide**, no de entrada.
 
 `js/router.js` implementa un selector de "vistas" (`.view[data-view]`):
 solo una está visible a la vez, y cambiar de una a otra (clic en el nav, en
-un modelo, en "Explorar en 3D", etc.) dispara un cross-fade con GSAP —
+un modelo, en "Explorar en 3D", etc.) dispara una transición con Web Animations —
 la sensación de cambiar de pantalla, sin el costo de una recarga real.
 Cada transición tiene un **temporizador de seguridad** independiente del
-GSAP/rAF (`setTimeout`, ver comentarios en `router.js`): si el navegador
+la animación (`setTimeout`, ver comentarios en `router.js`): si el navegador
 llegara a suspender la animación (pestaña en segundo plano, por ejemplo),
 la vista de todos modos termina visible — el contenido nunca puede quedar
 invisible para siempre por una animación que no corrió.
@@ -123,7 +123,8 @@ js/
   router.js        selector de vistas con cross-fade + temporizador de seguridad
   scene.js         renderer/escena/luces/entorno/resize (import bajo demanda)
   camera.js        estados de cámara + tweening GSAP
-  vehicle.js       datos de vehículos (specs reales) + constructor procedural
+  vehicle-data.js  catálogo independiente de Three.js
+  vehicle.js       constructor procedural 3D
   hotspots.js      definición de hotspots + proyección 3D->2D
   interactions.js  cursor personalizado, pointer tracking, gestos táctiles
   animations.js    aperturas de piezas (capó/maletero/puertas/ruedas)
@@ -150,3 +151,39 @@ dentro de la raíz de WAMP, así que basta con abrir
 3. Reemplazar los placeholders `[DATOS]` restantes con especificaciones
    oficiales completas (consumo, maletero, dimensiones, seguridad).
 4. Implementar diseño de sonido profesional si se decide usar audio.
+
+## Rediseño de materiales — septiembre 2026
+
+La capa `css/materials.css` organiza cuatro recursos visuales:
+
+- **Glassmorfismo:** panel de descubrimiento y paneles contextuales del explorador. Blur limitado a superficies pequeñas, desactivado en móvil y con transparencia reducida.
+- **Neumorfismo:** filtros, especificaciones y configurador sobre una base mate clara. Las selecciones también tienen bordes, texto y estados ARIA.
+- **Claymorfismo:** tarjetas de modelos y servicios con esquinas suaves, bordes gruesos y sombras interiores estáticas.
+- **Brutalismo editorial:** títulos condensados de gran escala, composición asimétrica, franja roja y llamadas a la acción con sombra sólida.
+
+El inicio mantiene la presentación Toyota con rayos y entrada manual. Los filtros Todos/Híbridos/SUV/Pickup muestran modelos reales del catálogo existente. El explorador sigue siendo optativo y procedural; no es una reproducción oficial del vehículo.
+
+### Fluidez y accesibilidad
+
+- Datos del catálogo separados del constructor: ningún módulo inicial importa Three.js estáticamente.
+- Cursor actualizado con eventos de puntero, sin interpolación ni bucle perpetuo de animación.
+- Transiciones interrumpibles y botones Atrás/Adelante del navegador mediante historial real.
+- Inicio y fichas navegables aunque no se descargue la librería de animación 3D.
+- Controles de configuración con flechas, Home/End, etiqueta de selección y mensaje de error cuando falla el motor 3D.
+- La combinación elegida se conserva al cambiar de vehículo.
+- Respeto de movimiento reducido, transparencia reducida y contraste aumentado.
+- Esta revisión conserva las cifras y las fuentes anteriores; no constituye una actualización de precios ni una nueva verificación de especificaciones.
+
+### Ejecutar y comprobar
+
+Requiere Node.js 20 o posterior. No hay dependencias npm que instalar.
+
+```sh
+npm run dev
+# Abrir http://127.0.0.1:4173
+npm test
+```
+
+También funciona como sitio estático en WAMP o GitHub Pages, sin compilar.
+
+Las pruebas de regresión cubren el grafo de importaciones inicial (sin WebGL), las fotografías del catálogo, las rutas locales de assets, la navegación interrumpida y el historial del navegador. La revisión visual se realiza en escritorio y móvil; el desempeño real del 3D depende de la GPU y de las librerías externas servidas por CDN.

@@ -75,6 +75,7 @@ export class HotspotController {
     this.onActivate = onActivate;
     this.hotspots = [];
     this.elements = new Map();
+    this.compactLayout = window.matchMedia("(max-width: 860px)");
     this._raycastTargets = [];
 
     // PERF: canvas and hotspot-layer are both `position:absolute; inset:0`
@@ -113,14 +114,8 @@ export class HotspotController {
       btn.innerHTML = `<span class="hotspot__dot" aria-hidden="true"></span><span class="hotspot__label">${hs.label}</span>`;
 
       btn.addEventListener("click", () => this.onActivate(hs));
-      btn.addEventListener("touchend", (e) => {
-        // First tap reveals label (mobile), second tap (already tapped) activates.
-        if (!btn.classList.contains("is-tapped")) {
-          e.preventDefault();
-          this._clearTapped();
-          btn.classList.add("is-tapped");
-        }
-      });
+      // Use the same single activation for mouse, touch, and keyboard.
+      // Cancelling touchend used to swallow the first mobile click.
 
       this.layerEl.appendChild(btn);
       this.elements.set(hs.id, btn);
@@ -143,6 +138,13 @@ export class HotspotController {
 
   /** Projects each hotspot's 3D anchor (world space) onto screen space. */
   update(camera, vehicleRoot) {
+    if (this.compactLayout.matches) {
+      this.elements.forEach((el) => {
+        el.style.opacity = "";
+        el.style.pointerEvents = "";
+      });
+      return;
+    }
     const { width, height } = this._size;
     const worldPos = this._scratchWorldPos;
     const toPoint = this._scratchToPoint;

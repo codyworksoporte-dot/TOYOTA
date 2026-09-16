@@ -94,8 +94,12 @@ export function createScene(canvas) {
     const parent = canvas.parentElement;
     const w = parent.clientWidth;
     const h = parent.clientHeight;
+    // The renderer can be initialized from the configurator while hidden.
+    if (!w || !h) return;
     renderer.setSize(w, h, false);
     camera.aspect = w / h;
+    // Keep the complete vehicle in frame on portrait phones.
+    camera.zoom = Math.min(1, Math.max(0.3, camera.aspect / 1.5));
     camera.updateProjectionMatrix();
   }
 

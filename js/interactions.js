@@ -8,7 +8,7 @@ export class CustomCursor {
   constructor(el) {
     this.el = el;
     this.labelEl = el.querySelector(".cursor__label");
-    this.enabled = !isTouchDevice;
+    this.enabled = !isTouchDevice && window.matchMedia("(min-width: 861px) and (pointer: fine)").matches;
     this.x = window.innerWidth / 2;
     this.y = window.innerHeight / 2;
     this.tx = this.x;
@@ -19,25 +19,19 @@ export class CustomCursor {
       return;
     }
 
-    window.addEventListener("mousemove", (e) => {
-      this.tx = e.clientX;
-      this.ty = e.clientY;
-    });
-    window.addEventListener("mouseleave", () => this.el.classList.add("is-hidden"));
-    window.addEventListener("mouseenter", () => this.el.classList.remove("is-hidden"));
-
-    this._raf();
+    this.el.classList.add("is-hidden");
+    document.documentElement.classList.add("custom-cursor-ready");
+    window.addEventListener("pointermove", (e) => {
+      if (e.pointerType === "touch") return;
+      this.el.classList.remove("is-hidden");
+      // The visible mark and the actual hit target stay together; no idle loop.
+      this.el.style.transform = `translate3d(${e.clientX}px, ${e.clientY}px, 0)`;
+      const target = e.target.closest("a, button, [role='radio']");
+      this.setHover(Boolean(target));
+    }, { passive: true });
+    document.documentElement.addEventListener("pointerleave", () => this.el.classList.add("is-hidden"));
+    window.addEventListener("blur", () => this.el.classList.add("is-hidden"));
   }
-
-  _raf = () => {
-    if (!this.enabled) return;
-    // Snappy, near-1:1 follow — just enough smoothing (0.6) to take the edge
-    // off raw mousemove jitter without feeling laggy behind the real pointer.
-    this.x += (this.tx - this.x) * 0.6;
-    this.y += (this.ty - this.y) * 0.6;
-    this.el.style.transform = `translate(${this.x}px, ${this.y}px)`;
-    requestAnimationFrame(this._raf);
-  };
 
   setHover(isHover, label = "") {
     if (!this.enabled) return;
